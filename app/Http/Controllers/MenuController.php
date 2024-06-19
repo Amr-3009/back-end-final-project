@@ -61,7 +61,36 @@ class MenuController extends Controller
      */
     public function update(Request $request, string $id)
     {
-    //
+    
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'ingredients' => 'string|nullable',
+            'price' => 'required|numeric|between:1,99999.99',
+            'image' => 'nullable|image'
+        ]);
+    
+        // Set default value for 'ingredients' if it's null
+        if (empty($validatedData['ingredients'])) {
+            $validatedData['ingredients'] = "Made with eggs, lettuce, salt, oil and other ingredients.";
+        } else {
+            $menu = Menu::where('id', $id)->first();
+            $validatedData['ingredients'] = $menu->ingredients;
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
+            $validatedData['image'] = 'images/' . $imageName;
+        } else {
+            $menu = Menu::where('id', $id)->first();
+            $validatedData['image'] = $menu->image;
+        }
+
+        $menu = Menu::where('id', $id)->first();
+        $menu->update($validatedData);
+        return response()->json(["msg" => "Menu Item #$menu->id Updated Successfully", "Menu Item" => $menu], 201);
     }
 
     /**
