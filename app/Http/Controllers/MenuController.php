@@ -63,10 +63,10 @@ class MenuController extends Controller
     {
     
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'name' => 'string|max:255',
+            'category' => 'string|max:255',
             'ingredients' => 'string|nullable',
-            'price' => 'required|numeric|between:1,99999.99',
+            'price' => 'numeric|between:1,99999.99',
             'image' => 'nullable|image'
         ]);
     
