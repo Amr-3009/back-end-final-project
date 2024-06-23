@@ -26,8 +26,10 @@ Route::post("/menu", [MenuController::class, 'store'])->name('menu.store');
 Route::get("/menu/{id}", [MenuController::class, 'show'])->name('menu.show');
 Route::put("/menu/{id}", [MenuController::class, 'update'])->name('menu.update');
 Route::delete("/menu/{id}", [MenuController::class, 'destroy'])->name('menu.destroy');
+Route::get("/users", [UserController::class, 'index'])->name('users.index');
 
 Route::post("/user-register", [UserController::class, 'register'])->name('user.register');
+Route::post("/user-login", [UserController::class, 'login'])->name('user.login');
 
 
 

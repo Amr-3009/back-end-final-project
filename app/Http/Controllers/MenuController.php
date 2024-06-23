@@ -62,35 +62,34 @@ class MenuController extends Controller
     public function update(Request $request, string $id)
     {
     
+        $menu = Menu::findOrFail($id);
+
         $validatedData = $request->validate([
-            'name' => 'string|max:255',
-            'category' => 'string|max:255',
-            'ingredients' => 'string|nullable',
-            'price' => 'numeric|between:1,99999.99',
-            'image' => 'nullable|image'
+            'name' => 'sometimes|string|max:255',
+            'category' => 'sometimes|string|max:255',
+            'ingredients' => 'sometimes|nullable|string',
+            'price' => 'sometimes|numeric|between:1,99999.99',
+            'image' => 'sometimes|nullable|image'
         ]);
     
-        // Set default value for 'ingredients' if it's null
-        if (empty($validatedData['ingredients'])) {
-            $validatedData['ingredients'] = "Made with eggs, lettuce, salt, oil and other ingredients.";
-        } else {
-            $menu = Menu::where('id', $id)->first();
-            $validatedData['ingredients'] = $menu->ingredients;
-        }
-
         if ($request->hasFile('image')) {
+            // Delete old image
+            if ($menu->image && file_exists(public_path($menu->image)) && $menu->image !== 'images/600x400.png') {
+                unlink(public_path($menu->image));
+            }
+    
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('images'), $imageName);
             $validatedData['image'] = 'images/' . $imageName;
-        } else {
-            $menu = Menu::where('id', $id)->first();
-            $validatedData['image'] = $menu->image;
         }
-
-        $menu = Menu::where('id', $id)->first();
+    
         $menu->update($validatedData);
-        return response()->json(["msg" => "Menu Item #$menu->id Updated Successfully", "Menu Item" => $menu], 201);
+    
+        return response()->json([
+            "message" => "Menu Item #{$menu->id} Updated Successfully",
+            "menuItem" => $menu
+        ], 200);
     }
 
     /**

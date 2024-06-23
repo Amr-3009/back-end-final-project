@@ -13,10 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
-    
-
     /**
      * Register a newly created resource in storage.
      */
@@ -31,34 +29,20 @@ class UserController extends Controller
         return response()->json(["msg"=>"Registered Successfully"]);
     }
     /**
-     * Store a newly created resource in storage.
+     * Login a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    public function login(Request $request){
+        $validatedData = $request->validate([
+            "email"=>"required|email|max:255",
+            "password"=>"required|string|max:255|min:8"
+        ]);
+        $user=User::where('email',$validatedData['email'])->first();
+        if(!$user || !Hash::check($validatedData['password'],$user->password)){
+            return response()->json(["msg"=>"Invalid Credentials"]);
+        }
+        
+        $token = $user->createToken("auth_token")->plainTextToken;
+        $cookie = cookie("UserToken",$token);
+        return response()->json(["msg"=>"Login Successfully"])->withCookie($cookie);
     }
 }
