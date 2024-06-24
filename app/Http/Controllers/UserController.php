@@ -43,6 +43,23 @@ class UserController extends Controller
         
         $token = $user->createToken("auth_token")->plainTextToken;
         $cookie = cookie("UserToken",$token);
-        return response()->json(["msg"=>"Login Successfully"])->withCookie($cookie);
+        return response()->json(["msg"=>"Login Successfully", "UserToken"=>$token, "userID"=>$user->id]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+        $validatedData = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:users,email,' . $id,
+            'password' => 'sometimes|string|max:255|min:8'
+        ]);
+        $user->update($validatedData);
+        return response()->json(["msg" => "User Updated Successfully", "User" => $user]);
+    }
+
+    public function show(string $id)
+    {
+        return User::where('id', $id)->first();
     }
 }

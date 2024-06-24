@@ -20,17 +20,21 @@ use App\Http\Controllers\UserController;
 //     return $request->user();
 // });
 
-
+// public
 Route::get("/menu", [MenuController::class, 'index'])->name('menu.index');
+Route::post("/user-register", [UserController::class, 'register'])->name('user.register');
+Route::post("/user-login", [UserController::class, 'login'])->name('user.login');
+
+// admin privilages only
 Route::post("/menu", [MenuController::class, 'store'])->name('menu.store');
 Route::get("/menu/{id}", [MenuController::class, 'show'])->name('menu.show');
 Route::put("/menu/{id}", [MenuController::class, 'update'])->name('menu.update');
 Route::delete("/menu/{id}", [MenuController::class, 'destroy'])->name('menu.destroy');
 Route::get("/users", [UserController::class, 'index'])->name('users.index');
 
-Route::post("/user-register", [UserController::class, 'register'])->name('user.register');
-Route::post("/user-login", [UserController::class, 'login'])->name('user.login');
 
-
+// user privilages only
+Route::get("/user/{id}", [UserController::class, 'show'])->name('user.show');
+Route::put("/user/{id}", [UserController::class, 'update'])->name('user.update');
 
 //.
