@@ -50,10 +50,24 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $validatedData = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|max:255|unique:users,email,' . $id,
-            'password' => 'sometimes|string|max:255|min:8'
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|string|max:255|min:8'
         ]);
+        if (isset($validatedData['name']) && !empty($validatedData['name'])) {
+            $dataToUpdate['name'] = $validatedData['name'];
+        }
+        
+        if (isset($validatedData['email']) && !empty($validatedData['email'])) {
+            $dataToUpdate['email'] = $validatedData['email'];
+        }
+        if (isset($validatedData['password'])) {
+            if(!empty($validatedData['password'])){
+                $validatedData['password'] = Hash::make($validatedData['password']);
+            }else{
+                unset($validatedData['password']);
+            }
+        }
         $user->update($validatedData);
         return response()->json(["msg" => "User Updated Successfully", "User" => $user]);
     }
