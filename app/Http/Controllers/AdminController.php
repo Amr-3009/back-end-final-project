@@ -30,7 +30,7 @@ class AdminController extends Controller
         
         $token = $admin->createToken("auth_token")->plainTextToken;
         $cookie = cookie("AdminToken",$token);
-        return response()->json(["msg"=>"Login Successfully", "adminID"=>$admin->id]);
+        return response()->json(["msg"=>"Login Successfully", "AdminToken"=>$token, "adminID"=>$admin->id]);
     }
 }
 

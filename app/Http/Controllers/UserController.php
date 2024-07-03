@@ -50,6 +50,7 @@ class UserController extends Controller
         $cookie = cookie("UserToken", $token);
         return response()->json([
             "msg" => "Login Successfully",
+            "UserToken" => $token,
             "userID" => $user->id,
         ]);
     }

@@ -28,11 +28,6 @@ Route::post("/user-register", [UserController::class, 'register'])->name('user.r
 Route::post("/user-login", [UserController::class, 'login'])->name('user.login');
 Route::post("/admin-login", [AdminController::class, 'login'])->name('admin.login');
 
-
-
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
   // user privilages only
 Route::get("/user/{id}", [UserController::class, 'show'])->name('user.show');
